@@ -15,27 +15,27 @@ movl %edx, %r11d        /*p3 -> r11d*/
 movl %r10d, -4(%rbp)    /*r10d -> v1*/
 movl %r11d, -4(%rbp)    /*r11d -> v1*/
 movl -4(%rbp), %r10d    /*v1 -> %r10d*/
-movl -4(%rbp). %r11d    /*v1 -> %r11d*/
+movl -4(%rbp), %r11d    /*v1 -> %r11d*/
 
 movl %r10d, -8(%rbp)    /*r10d -> v2*/
 movl %r11d, -8(%rbp)    /*r11d -> v2*/
 movl -8(%rbp), %r10d    /*v2 -> %r10d*/
-movl -8(%rbp). %r11d    /*v2 -> %r11d*/
+movl -8(%rbp), %r11d    /*v2 -> %r11d*/
 
 movl %r10d, -12(%rbp)    /*r10d -> v3*/
 movl %r11d, -12(%rbp)    /*r11d -> v3*/
 movl -12(%rbp), %r10d    /*v3 -> %r10d*/
-movl -12(%rbp). %r11d    /*v3 -> %r11d*/
+movl -12(%rbp), %r11d    /*v3 -> %r11d*/
 
 movl %r10d, -16(%rbp)    /*r10d -> v4*/
 movl %r11d, -16(%rbp)    /*r11d -> v4*/
 movl -16(%rbp), %r10d    /*v4 -> %r10d*/
-movl -16(%rbp). %r11d    /*v4 -> %r11d*/
+movl -16(%rbp), %r11d    /*v4 -> %r11d*/
 
 movl %r10d, -20(%rbp)    /*r10d -> v5*/
 movl %r11d, -20(%rbp)    /*r11d -> v5*/
 movl -20(%rbp), %r10d    /*v5 -> %r10d*/
-movl -20(%rbp). %r11d    /*v5 -> %r11d*/
+movl -20(%rbp), %r11d    /*v5 -> %r11d*/
 
 /*Constantes */
 movl $0, %r10d
@@ -85,11 +85,11 @@ subl %r10d, %r11d
 imull %r10d, %r11d
 
 /*iflez flag - caso menor ou igual a 0*/
-cmpl -4(%rbp), $0
-jl 5                     /*iflez v1 5*/
+cmpl $0, -4(%rbp)
+jge 5                     /*iflez v1 5*/
 
-cmpl -8(%rbp), $0
-jl 10                     /*iflez v2 10*/
+cmpl $0, -8(%rbp)
+jge 10                     /*iflez v2 10*/
 
 /*retorno*/
 movl -4(%rbp), %eax  /*ret v1*/
