@@ -98,6 +98,9 @@ movl -12(%rbp), %eax /*ret v3*/
 movl -16(%rbp), %eax /*ret v4*/
 movl -20(%rbp), %eax /*ret v5*/
 
+movl $0, %eax /*ret 0*/
+movl $1, %eax /*ret 1 */
+
 /*finalização*/
 leave
 ret
