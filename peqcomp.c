@@ -187,7 +187,7 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
                 // finalização dos ifs
                 for(int i = 0; i < numIfs; i++)
                 {
-                    int offset = indiceLinha[linhasDestino[i]] - (indiceSaltos[i] + 6);
+                    int offset = indiceLinha[linhasDestino[i] - 1] - (indiceSaltos[i] + 6);
 
                     codigo[indiceSaltos[i] + 2] = offset & 0xff;
                     codigo[indiceSaltos[i] + 3] = (offset >> 8) & 0xff;
