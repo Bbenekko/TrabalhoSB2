@@ -29,9 +29,9 @@ movl %esi, -4(%rbp) /*p2 -> v1*/
 movl %edx, -4(%rbp) /*p3 -> v1*/
 
 /*Operações*/
-addl %r10d, %r11d /* soma */ 
-subl %r10d, %r11d /* subtração */
-imull %r10d, %r11d /* multiplicação */
+addl %r11d, %r10d /* soma */ 
+subl %r11d, %r10d /* subtração */
+imull %r11d, %r10d /* multiplicação */
 
 /*iflez flag - caso menor ou igual a 0*/
 cmpl $0, -4(%rbp)

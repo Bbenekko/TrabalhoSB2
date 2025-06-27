@@ -36,13 +36,13 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
     int indiceSaltos[30];
     int numIfs = 0;
 
-    int linha2Indice[30];
+    int indiceLinha[30];
 
     index = insereCodigo(codigo, index, inicio, 8);
 
     while ((c = fgetc(f)) != EOF)
     {
-        linha2Indice[line-1] = index; // salva o index de inicio de cada linha
+        indiceLinha[line-1] = index; // salva o index de inicio de cada linha
         switch (c)
         {
             case 'v' : // atribuição ou operação
@@ -125,22 +125,22 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
                     //REALIZAÇÃO DA OPERAÇÃO
                     if(opAritmetica == '+')
                     {
-                        unsigned char comando[] = {0x45, 0x01, 0xd3};
+                        unsigned char comando[] = {0x45, 0x01, 0xda};
                         index = insereCodigo(codigo, index, comando, 3);
                     }
                     else if(opAritmetica == '-')
                     {
-                        unsigned char comando[] = {0x45, 0x29, 0xd3};
+                        unsigned char comando[] = {0x45, 0x29, 0xda};
                         index = insereCodigo(codigo, index, comando, 3);
                     }
                     else if(opAritmetica == '*')
                     {
-                        unsigned char comando[] = {0x45, 0x0f, 0xaf, 0xda};
+                        unsigned char comando[] = {0x45, 0x0f, 0xaf, 0xd3};
                         index = insereCodigo(codigo, index, comando, 4);
                     }
 
                     //RETORNO DE VALOR
-                    unsigned char comando[] = {0x44, 0x89, 0x5d, var[var1num-1]};
+                    unsigned char comando[] = {0x44, 0x89, 0x55, var[var1num-1]};
                     index = insereCodigo(codigo, index, comando, 4);
                 }
 
@@ -155,9 +155,9 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
                 unsigned char comando1[] = {0x83, 0x7d, var[varnum-1], 0x00}; // cmpl
                 index = insereCodigo(codigo, index, comando1, 4);
 
-                unsigned char comando2[] = {0x0f, 0x8e, 0x00, 0x00}; // jle (preencher offset dps)
-                int offset = index + 2;
-                index = insereCodigo(codigo, index, comando2, 4);
+                unsigned char comando2[] = {0x0f, 0x8e, 0x00, 0x00, 0x00, 0x00}; // jle (preencher offset dps)
+                int offset = index;
+                index = insereCodigo(codigo, index, comando2, 6);
 
                 linhasDestino[numIfs] = nDestino;
                 indiceSaltos[numIfs] = offset;
@@ -187,17 +187,18 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
                 // finalização dos ifs
                 for(int i = 0; i < numIfs; i++)
                 {
-                    int offset = linha2Indice[linhasDestino[i]] - (indiceSaltos[i] + 2);
+                    int offset = indiceLinha[linhasDestino[i]] - (indiceSaltos[i] + 6);
 
-                    codigo[indiceSaltos[i]] = offset & 0xff;
-                    codigo[indiceSaltos[i] + 1] = (offset >> 8) & 0xff;
+                    codigo[indiceSaltos[i] + 2] = offset & 0xff;
+                    codigo[indiceSaltos[i] + 3] = (offset >> 8) & 0xff;
+                    codigo[indiceSaltos[i] + 4] = (offset >> 16) & 0xff;
+                    codigo[indiceSaltos[i] + 5] = (offset >> 24) & 0xff;
                 }
 
-                return (funcp)codigo;
-                // não necessita de um break :)
+                break;
             }
         }
         line++;
     }
-    return NULL; // ?? 
+    return (funcp)codigo;
 }
