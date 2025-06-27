@@ -32,7 +32,6 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
     int index = 0;
 
     //vetores para iflez
-    int linhasAtuais[30];
     int linhasDestino[30];
     int indiceSaltos[30];
     int numIfs = 0;
@@ -139,6 +138,10 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
                         unsigned char comando[] = {0x45, 0x0f, 0xaf, 0xda};
                         index = insereCodigo(codigo, index, comando, 4);
                     }
+
+                    //RETORNO DE VALOR
+                    unsigned char comando[] = {0x44, 0x89, 0x5d, var[var1num-1]};
+                    index = insereCodigo(codigo, index, comando, 4);
                 }
 
                 break;
@@ -156,7 +159,6 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
                 int offset = index + 2;
                 index = insereCodigo(codigo, index, comando2, 4);
 
-                linhasAtuais[numIfs] = line;
                 linhasDestino[numIfs] = nDestino;
                 indiceSaltos[numIfs] = offset;
                 numIfs ++;
@@ -197,4 +199,5 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
         }
         line++;
     }
+    return NULL; // ?? 
 }
