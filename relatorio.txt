@@ -1,6 +1,15 @@
 Integrantes:
 Bento Bruno Contarini Gonçalves 2311122 3WC
 
+OBS: Para o código funcionar, precisei alterar um pouco o header proposto
+
+Meu header:
+#include <stdio.h>
+typedef int (*funcp) (int, int, int);
+int insereCodigo(unsigned char codigo[], int index, unsigned char inserido[], int tamanho);
+void transformaIntEmVetor(int num, unsigned char vetor[]);
+funcp peqcomp(FILE *f, unsigned char codigo[]);
+
 O código inteiro aparenta estar funcionando e não teve nenhum problema na bateria de testes.
 As funções usadas para testar foram:
 
