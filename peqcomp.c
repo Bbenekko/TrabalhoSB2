@@ -1,3 +1,5 @@
+/* Bento Bruno Contarini Gonçalves 2311122 3WC */
+
 #include <stdio.h>
 typedef int (*funcp) ();
 

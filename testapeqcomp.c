@@ -1,3 +1,5 @@
+/* Bento Bruno Contarini Gonçalves 2311122 3WC */
+
 #include "peqcomp.h"
 #include <stdio.h>
 #include <stdlib.h>
