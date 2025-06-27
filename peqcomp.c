@@ -31,10 +31,19 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
     int c;
     int index = 0;
 
+    //vetores para iflez
+    int linhasAtuais[30];
+    int linhasDestino[30];
+    int indiceSaltos[30];
+    int numIfs = 0;
+
+    int linha2Indice[30];
+
     index = insereCodigo(codigo, index, inicio, 8);
 
     while ((c = fgetc(f)) != EOF)
     {
+        linha2Indice[line-1] = index; // salva o index de inicio de cada linha
         switch (c)
         {
             case 'v' : // atribuição ou operação
@@ -47,7 +56,7 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
                 {
                     char var2tipo;
                     int var2num;
-                    fscanf(f, " %c%d", &var2tipo, &var2num);
+                    fscanf(f, " %c%d\n", &var2tipo, &var2num);
 
                     switch(var2tipo)
                     {
@@ -84,7 +93,7 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
                 {
                     char var2tipo, opAritmetica, var3tipo;
                     int var2num, var3num;
-                    fscanf(f, " %c%d %c %c%d", &var2tipo, &var2num, &opAritmetica, &var3tipo, &var3num);
+                    fscanf(f, " %c%d %c %c%d\n", &var2tipo, &var2num, &opAritmetica, &var3tipo, &var3num);
 
                     //PRIMEIRO OPERADOR
                     if (var2tipo == '$') // constante para r10d
@@ -137,19 +146,53 @@ funcp peqcomp (FILE *f, unsigned char codigo[])
 
             case 'i' : // loop
             {
+                int varnum, nDestino;
+                fscanf(f, "flez v%d %d\n", &varnum, &nDestino);
+
+                unsigned char comando1[] = {0x83, 0x7d, var[varnum-1], 0x00}; // cmpl
+                index = insereCodigo(codigo, index, comando1, 4);
+
+                unsigned char comando2[] = {0x0f, 0x8e, 0x00, 0x00}; // jle (preencher offset dps)
+                int offset = index + 2;
+                index = insereCodigo(codigo, index, comando2, 4);
+
+                linhasAtuais[numIfs] = line;
+                linhasDestino[numIfs] = nDestino;
+                indiceSaltos[numIfs] = offset;
+                numIfs ++;
 
                 break;
             }
 
             case 'r' : // retorno
             {
-                int varRet;
-                fscanf(f, "et v%d", &varRet);
-                unsigned char comando[] = {0x8b, 0x45, var[varRet-1], 0xc9, 0xc3};
-                index = insereCodigo(codigo, index, comando, 5);
+                char varTipo;
+                int varNum;
+                fscanf(f, "et %c%d", &varTipo, &varNum);
+                if(varTipo == 'v')
+                {
+                    unsigned char comando[] = {0x8b, 0x45, var[varNum-1], 0xc9, 0xc3};
+                    index = insereCodigo(codigo, index, comando, 5);
+                }
+                else if(varTipo == '$')
+                {
+                    unsigned char vetorAux[4];
+                    transformaIntEmVetor(varNum, vetorAux);
+                    unsigned char comando[] = {0xb8, vetorAux[0], vetorAux[1], vetorAux[2], vetorAux[3], 0xc9, 0xc3};
+                    index = insereCodigo(codigo, index, comando, 7);
+                }
+
+                // finalização dos ifs
+                for(int i = 0; i < numIfs; i++)
+                {
+                    int offset = linha2Indice[linhasDestino[i]] - (indiceSaltos[i] + 2);
+
+                    codigo[indiceSaltos[i]] = offset & 0xff;
+                    codigo[indiceSaltos[i] + 1] = (offset >> 8) & 0xff;
+                }
 
                 return (funcp)codigo;
-                break;
+                // não necessita de um break :)
             }
         }
         line++;
